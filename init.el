@@ -9,7 +9,7 @@
 ;; to "ga".)
 
 (let* ((font "Cascadia Code") ;; <- replace with you font
-       (spec (font-spec :family font :size 13.0 :weight 'normal)))
+       (spec (font-spec :family font :size 19.0 :weight 'normal)))
   (set-face-font 'default spec)
   (set-face-font 'fixed-pitch spec)
   ;; Prepend our font to the default fontset to make it the first fallback
@@ -154,3 +154,5 @@
 ; (require 'helheim-edit-indirect) ; Alternative "zn" binding
 
 ;;; init.el ends here
+;;; load onfig.el
+(load (expand-file-name "config.el" helheim-root-directory))
