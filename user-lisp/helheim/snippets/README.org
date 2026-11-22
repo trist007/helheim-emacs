@@ -1,0 +1,33 @@
+* helheim-snippets
+
+Install and set up the [[https://github.com/joaotavora/yasnippet][YASnippet]] snippets engine.
+
+** Enable
+
+Add the following line to your =init.el=:
+#+begin_src emacs-lisp
+(require 'helheim-snippets)
+#+end_src
+
+For basic snippets you can install [[https://github.com/AndreaCrotti/yasnippet-snippets][yasnippet-snippets]]. It is not installed
+by default because not everyone needs all its snippets.
+
+** Packages
+- [[https://github.com/joaotavora/yasnippet][yasnippet]]
+- [[https://github.com/elken/yasnippet-capf][yasnippet-capf]]
+
+** Writing snippets
+
+Put your snippets into the [[file:~/.config/emacs/snippets][snippets]] directory: one file per snippet, in
+a subdirectory named after the major mode. Snippets for a parent mode,
+like ~prog-mode~ or ~text-mode~, work in all modes derived from it. =SPC i n=
+creates a snippet file in the right place. See the [[https://joaotavora.github.io/yasnippet/snippet-development.html][YASnippet manual]] for
+the full syntax.
+
+** Keybindings
+
+Type =/= to open the completion menu with snippets.
+
+| =SPC i i= | pick a snippet from the menu |
+| =SPC i n= | create a new snippet         |
+| =SPC i v= | visit the file of a snippet  |
