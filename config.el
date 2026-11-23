@@ -84,6 +84,13 @@
       (seq-remove (lambda (e) (memq (car e) '(c-mode c++-mode)))
                   major-mode-remap-defaults))
 ;; Emacs config
+;; Disable smooth scroll animation in hel (check `C-h v hel-smooth` if variable name differs)
+(with-eval-after-load 'hel
+  (setq hel-smooth-scroll nil))
+
+;; Also disable Emacs 29+ built-in pixel-scroll animation if active
+(pixel-scroll-precision-mode -1)
+
 (defun my/enable-hel-normal-in-compilation (&rest _)
   "Ensure `hel-mode' is active in normal state inside compilation buffers."
   (when (derived-mode-p 'compilation-mode)
@@ -116,10 +123,6 @@
   (woman topic))
 
 (keymap-global-set "C-c w" #'my-woman)
-
-;; Run after Helheim's dired configuration loads
-;; (with-eval-after-load 'dired-x
-;;   (remove-hook 'dired-mode-hook #'dired-omit-mode))
 
 ;; Do not show red squares for trailing whitespace
 (defun my/no-trailing-whitespace ()
@@ -227,6 +230,7 @@
          (default "* %?\n%U\n%a\n")
          (notes
           '(("e" "DoomEmacs note" "doomemacs")
+            ("H" "Helheim note" "helheim")
             ("b" "Blender note" "blender")
             ("p" "SubstancePainter note" "substancepainter")
             ("x" "Graphics note" "graphics")
