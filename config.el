@@ -136,15 +136,35 @@
 (add-hook 'emacs-lisp-mode-hook #'my/no-trailing-whitespace)
 
 ;; C-k kill-line will work in minibuffer
-(dolist (map (list minibuffer-local-map
-                   minibuffer-local-completion-map
-                   minibuffer-local-must-match-map
-                   minibuffer-local-filename-completion-map
-                   (bound-and-true-p vertico-map)
-                   (bound-and-true-p ivy-minibuffer-map)
-                   (bound-and-true-p helm-map)))
-  (when (keymapp map)
-    (keymap-set map "C-k" #'delete-minibuffer-contents)))
+;; C-k clears the minibuffer input; elsewhere it behaves as kill-line
+(defun my/c-k-dwim ()
+  (interactive)
+  (if (minibufferp)
+      (delete-minibuffer-contents)
+    (call-interactively #'kill-line)))
+
+(defun my/bind-minibuffer-c-k ()
+  (dolist (map (list minibuffer-local-map
+                     minibuffer-local-completion-map
+                     minibuffer-local-must-match-map
+                     minibuffer-local-filename-completion-map
+                     (bound-and-true-p vertico-map)
+                     (bound-and-true-p hel-insert-state-map)
+                     (bound-and-true-p hel-normal-state-map)))
+    (when (keymapp map)
+      (keymap-set map "C-k" #'my/c-k-dwim))))
+
+(add-hook 'elpaca-after-init-hook #'my/bind-minibuffer-c-k)
+
+;; (dolist (map (list minibuffer-local-map
+;;                    minibuffer-local-completion-map
+;;                    minibuffer-local-must-match-map
+;;                    minibuffer-local-filename-completion-map
+;;                    (bound-and-true-p vertico-map)
+;;                    (bound-and-true-p ivy-minibuffer-map)
+;;                    (bound-and-true-p helm-map)))
+;;   (when (keymapp map)
+;;     (keymap-set map "C-k" #'delete-minibuffer-contents)))
 
 ;; Doxyfile
 (add-to-list 'auto-mode-alist '("Doxyfile\\'" . conf-unix-mode))
