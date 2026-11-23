@@ -1,4 +1,4 @@
-;;; config.el -*- lexical-binding: t; -*-
+;;; config.el --- Personal configuration -*- lexical-binding: t; -*-
 
 ;; Hooks
 (defun my/c-indent-settings ()
@@ -20,6 +20,8 @@
 
 (add-hook 'c-mode-hook #'my/c-indent-settings)
 (add-hook 'c++-mode-hook #'my/c-indent-settings)
+
+(add-hook 'emacs-startup-hook #'delete-other-windows)
 
 ;; Disable elpaca from overwritting initial buffer choice
 (add-hook 'elpaca-after-init-hook
@@ -202,7 +204,8 @@
   ("<f3>"     . "build main")
   ("S-<f3>"   . "build main2")
   ("<f1>"     . "clean")
-  ("<f2>"     . "run")
+  ("<f2>"     . "run d3d11")
+  ("S-<f2>"   . "run vulkan")
   ("<f5>"     . "build platano")))
 
 (with-eval-after-load 'cc-mode
