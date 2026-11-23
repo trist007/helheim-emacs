@@ -37,6 +37,16 @@
 (keymap-global-set "C-," #'other-frame)
 (keymap-global-set "C-c o f" #'make-frame)
 
+;; unassign F2 from eglot-rename
+(with-eval-after-load 'eglot
+  (keymap-unset eglot-mode-map "<normal-state> <f2>" t)
+  (keymap-unset eglot-mode-map "<f2>" t))
+
+(with-eval-after-load 'hel
+  (keymap-unset hel-normal-state-map "<f2>" t)
+  (keymap-set mode-specific-map "g g" #'magit-status)
+  )
+
 ;; OS Specific Keybinds
 (cond
  ((eq system-type 'windows-nt)
@@ -74,6 +84,27 @@
       (seq-remove (lambda (e) (memq (car e) '(c-mode c++-mode)))
                   major-mode-remap-defaults))
 ;; Emacs config
+(defun my/enable-hel-normal-in-compilation (&rest _)
+  "Ensure `hel-mode' is active in normal state inside compilation buffers."
+  (when (derived-mode-p 'compilation-mode)
+    (unless (bound-and-true-p hel-mode)
+      (hel-mode 1))
+    (unless (eq hel-state 'normal)
+      (hel-normal-state))))
+
+;; 1. Runs every time `M-x compile` or `recompile` re-initializes the buffer
+(advice-add 'compilation-mode :after #'my/enable-hel-normal-in-compilation)
+
+;; 2. Runs if switching windows/buffers causes `hel` to drop out of normal state
+(add-hook 'window-selection-change-functions #'my/enable-hel-normal-in-compilation)
+
+;; Disable the fill-column indicator everywhere
+(global-display-fill-column-indicator-mode -1)
+(remove-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+(remove-hook 'text-mode-hook #'display-fill-column-indicator-mode)
+(add-hook 'after-change-major-mode-hook
+          (lambda () (display-fill-column-indicator-mode -1)))
+
 (setq display-line-numbers-type t)
 (setq woman-manpath '("//wsl$/CentOS/usr/share/man"
                       "//wsl$/CentOS/usr/local/share/man"
@@ -86,6 +117,10 @@
 
 (keymap-global-set "C-c w" #'my-woman)
 
+;; Run after Helheim's dired configuration loads
+;; (with-eval-after-load 'dired-x
+;;   (remove-hook 'dired-mode-hook #'dired-omit-mode))
+
 ;; Do not show red squares for trailing whitespace
 (defun my/no-trailing-whitespace ()
   (setq-local show-trailing-whitespace nil))
@@ -96,7 +131,15 @@
 (add-hook 'emacs-lisp-mode-hook #'my/no-trailing-whitespace)
 
 ;; C-k kill-line will work in minibuffer
-(keymap-set minibuffer-local-map "C-k" #'delete-minibuffer-contents)
+(dolist (map (list minibuffer-local-map
+                   minibuffer-local-completion-map
+                   minibuffer-local-must-match-map
+                   minibuffer-local-filename-completion-map
+                   (bound-and-true-p vertico-map)
+                   (bound-and-true-p ivy-minibuffer-map)
+                   (bound-and-true-p helm-map)))
+  (when (keymapp map)
+    (keymap-set map "C-k" #'delete-minibuffer-contents)))
 
 ;; Doxyfile
 (add-to-list 'auto-mode-alist '("Doxyfile\\'" . conf-unix-mode))
