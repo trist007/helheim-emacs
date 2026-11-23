@@ -26,6 +26,8 @@
 ;; Disable elpaca from overwritting initial buffer choice
 (add-hook 'elpaca-after-init-hook
           (lambda ()
+            (when (require 'which-key-posframe nil t)
+              (which-key-posframe-mode 1))
             (bookmark-load "C:/Users/Tristan/.config/helheim-emacs/var/bookmarks" t t)
             (condition-case err
                 (bookmark-jump "gamedev")
@@ -386,4 +388,4 @@
     (add-to-list 'auto-mode-alist (cons pattern 'glsl-mode))))
 
 ;; custom-set-faces
-my/apply-faces
+(my/apply-faces)
