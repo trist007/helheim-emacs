@@ -57,7 +57,12 @@
 
 ;; Themes
 (elpaca doom-themes
-  (load-theme 'doom-tokyo-night t))
+  (setq doom-themes-enable-italic nil)
+  (load-theme 'doom-tokyo-night t)
+  (my/apply-faces))
+
+(add-hook 'enable-theme-functions #'my/apply-faces)
+
 (which-function-mode 1)
 
 (add-to-list 'major-mode-remap-alist '(c-mode . c-mode))
@@ -81,6 +86,15 @@
 
 (keymap-global-set "C-c w" #'my-woman)
 
+;; Do not show red squares for trailing whitespace
+(defun my/no-trailing-whitespace ()
+  (setq-local show-trailing-whitespace nil))
+
+(add-hook 'prog-mode-hook #'my/no-trailing-whitespace)
+(add-hook 'c-mode-hook #'my/no-trailing-whitespace)
+(add-hook 'c++-mode-hook #'my/no-trailing-whitespace)
+(add-hook 'emacs-lisp-mode-hook #'my/no-trailing-whitespace)
+
 ;; C-k kill-line will work in minibuffer
 (keymap-set minibuffer-local-map "C-k" #'delete-minibuffer-contents)
 
@@ -100,17 +114,11 @@
   "Close popup-style windows at the bottom, otherwise quit."
   (interactive)
   (let ((closed nil))
-    (dolist (name '("*compilation*" "*wing-run*" "*Warnings*" "*Messages*"))
+    (dolist (name '("*compilation*" "*woman*" "*wing-run*" "*Warnings*" "*Messages*"))
       (when-let ((win (get-buffer-window name)))
         (ignore-errors (delete-window win))
         (setq closed t)))
     (unless closed (keyboard-quit))))
-
-;; (defun my/close-compilation ()
-;;   (interactive)
-;;   (if-let ((win (get-buffer-window "*compilation*")))
-;;       (delete-window win)
-;;     (message "No compilation window")))
 
 (with-eval-after-load 'hel
   (keymap-set hel-normal-state-map "<escape>" #'my/escape))
@@ -158,12 +166,12 @@
                   (lambda () (interactive) (my/wing-compile cmd))))))
 
 ;; Startup
-(setq initial-buffer-choice
-      (lambda ()
-        (or (ignore-errors
-              (bookmark-jump "wing-code")
-              (current-buffer))
-            (get-scratch-buffer-create))))
+;; (setq initial-buffer-choice
+;;       (lambda ()
+;;         (or (ignore-errors
+;;               (bookmark-jump "wing-code")
+;;               (current-buffer))
+;;             (get-scratch-buffer-create))))
 
 ;; Org Mode
 (with-eval-after-load 'org
@@ -253,31 +261,41 @@
           (lambda () (eglot-inlay-hints-mode -1)))
 
 ;; Custom faces syntax highlighting
-(custom-set-faces
- ;; eglot
- '(eglot-semantic-defaultLibrary ((t :foreground "#ba55d3")))
- '(eglot-semantic-readonly       ((t :foreground "#adff2f")))
+(dolist (mode '(c-mode c++-mode))
+  (font-lock-add-keywords
+   mode
+   '(("\\<\\([A-Za-z_][A-Za-z0-9_]*\\)\\s-*(" 1 'font-lock-function-call-face))
+   t))
 
- ;; dired
- '(diredfl-number     ((t :foreground "#ba55d3")))
- '(diredfl-read-priv  ((t :foreground "#1e90ff")))
- '(diredfl-write-priv ((t :foreground "#a020f0")))
- '(diredfl-exec-priv  ((t :foreground "#00ff00")))
+(defun my/apply-faces (&rest _)
+  (interactive)
+  (set-face-attribute 'font-lock-function-call-face nil :slant 'normal)
+  (custom-set-faces
+   ;; eglot
+   '(eglot-eglot-highlight-symbol-face ((t :foreground "#ba55d3")))
+   '(font-lock-constant-face       ((t :foreground "#adff2f")))
+   '(font-lock-function-call-face  ((t :foreground "#1e90ff")))
 
- ;; marginalia
- '(marginalia-file-priv-read  ((t :foreground "#1e90ff")))
- '(marginalia-file-priv-write ((t :foreground "#a020f0")))
- '(marginalia-file-priv-exec  ((t :foreground "#00ff00")))
- '(marginalia-number          ((t :foreground "#ba55d3")))
- '(marginalia-size            ((t :foreground "#ba55d3")))
+   ;; dired
+   '(diredfl-number     ((t :foreground "#ba55d3")))
+   '(diredfl-read-priv  ((t :foreground "#1e90ff")))
+   '(diredfl-write-priv ((t :foreground "#a020f0")))
+   '(diredfl-exec-priv  ((t :foreground "#00ff00")))
 
- ;; doxygen keywords
- '(font-lock-doc-markup-face ((t :foreground "#ff0000")))
+   ;; marginalia
+   '(marginalia-file-priv-read  ((t :foreground "#1e90ff")))
+   '(marginalia-file-priv-write ((t :foreground "#a020f0")))
+   '(marginalia-file-priv-exec  ((t :foreground "#00ff00")))
+   '(marginalia-number          ((t :foreground "#ba55d3")))
+   '(marginalia-size            ((t :foreground "#ba55d3")))
 
- ;; magit
- '(magit-branch-remote  ((t :foreground "#9370db")))
- '(magit-branch-current ((t :foreground "#9370db")))
- '(magit-branch-local   ((t :foreground "#ff0000"))))
+   ;; doxygen keywords
+   '(font-lock-doc-markup-face ((t :foreground "#ff0000")))
+
+   ;; magit
+   '(magit-branch-remote  ((t :foreground "#9370db")))
+   '(magit-branch-current ((t :foreground "#9370db")))
+   '(magit-branch-local   ((t :foreground "#ff0000")))))
 
 ;; Shader file syntax highlighting
 (add-to-list 'auto-mode-alist '("\\.spvasm\\'" . asm-mode))
@@ -296,3 +314,6 @@
   (dolist (pattern '("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"
                      "\\.comp\\'" "\\.tesc\\'" "\\.tese\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'glsl-mode))))
+
+;; custom-set-faces
+my/apply-faces
