@@ -28,7 +28,7 @@
           (lambda ()
             (bookmark-load "C:/Users/Tristan/.config/helheim-emacs/var/bookmarks" t t)
             (condition-case err
-                (bookmark-jump "wing-code")
+                (bookmark-jump "gamedev")
               (error (message "wing-code bookmark failed: %s" err)))))
 
 ;; Enable modules
@@ -175,7 +175,7 @@
              '("\\*compilation\\*"
                (display-buffer-in-side-window)
                (side . bottom)
-               (slot . 0)
+               (slot . 1)
                (window-height . 0.25)))
 
 (defun my/escape ()
