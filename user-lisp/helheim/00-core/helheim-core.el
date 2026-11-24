@@ -70,6 +70,11 @@ Must be set before `helheim-core' is loaded!"
            ;; a poor default.
            avy-single-candidate-jump nil))
 
+(setup ultra-scroll
+  (:after-init ultra-scroll-mode)
+  (:setopt mouse-wheel-tilt-scroll t ; Scroll horizontally with mouse side wheel.
+           mouse-wheel-progressive-speed nil))
+
 (setup hel
   (:install t)
   (hel-mode))
@@ -347,11 +352,11 @@ Use `delete-trailing-whitespace' command."
 
 ;;;;; Scrolling with mouse wheel and touchpad
 
-(setup ultra-scroll
-  (:install t)
-  (:after-init ultra-scroll-mode)
-  (:setopt mouse-wheel-tilt-scroll t ; Scroll horizontally with mouse side wheel.
-           mouse-wheel-progressive-speed nil))
+;; (setup ultra-scroll
+;;   (:install t)
+;;   (:after-init ultra-scroll-mode)
+;;   (:setopt mouse-wheel-tilt-scroll t ; Scroll horizontally with mouse side wheel.
+;;            mouse-wheel-progressive-speed nil))
 
 ;;; Text editing
 ;;;; Clipboard
@@ -453,97 +458,97 @@ Use `delete-trailing-whitespace' command."
 
 ;;;; Tree-sitter
 
-(setup treesit
-  (:when (treesit-available-p))
-  (:setopt treesit-font-lock-level 4
-           treesit-enabled-modes t) ;; Emacs 31
-  ;; XXX: Since Emacs 31 a missing grammar is installed when a file needing
-  ;;   it is visited (see `treesit-auto-install-grammar'). Remove when we
-  ;;   drop Emacs 30 support.
-  (when (< emacs-major-version 31)
-    (:after-init helheim-install-missing-treesit-grammars))
-  (let ((abi<15 (< (treesit-library-abi-version) 15)))
-    (:treesit c
-      "https://github.com/tree-sitter/tree-sitter-c"
-      :revision (if abi<15 "v0.23.6")) ;; "v0.24.1"
-    (:treesit cpp
-      "https://github.com/tree-sitter/tree-sitter-cpp"
-      :revision (if abi<15 "v0.23.4"))
-    (:treesit c-sharp
-      "https://github.com/tree-sitter/tree-sitter-c-sharp"
-      :revision (if abi<15 "v0.20.0")) ;; "v0.23.1"
-    (:treesit css
-      "https://github.com/tree-sitter/tree-sitter-css"
-      :revision (if abi<15 "v0.23.0")) ;; "v0.23.2"
-    (:treesit commonlisp
-      "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp"
-      :revision "v0.4.1")
-    (:treesit dockerfile
-      "https://github.com/camdencheek/tree-sitter-dockerfile")
-    (:treesit elixir
-      "https://github.com/elixir-lang/tree-sitter-elixir")
-    (:treesit go
-      "https://github.com/tree-sitter/tree-sitter-go"
-      :revision (if abi<15 "v0.20.0")) ;; "v0.25.0"
-    (:treesit gomod
-      "https://github.com/camdencheek/tree-sitter-go-mod"
-      :revision "v1.0.2")
-    (:treesit gowork
-      "https://github.com/omertuc/tree-sitter-go-work")
-    (:treesit html
-      "https://github.com/tree-sitter/tree-sitter-html"
-      :revision (if abi<15 "v0.23.0")) ;; "v0.23.2"
-    (:treesit java
-      "https://github.com/tree-sitter/tree-sitter-java")
-    (:treesit javascript
-      "https://github.com/tree-sitter/tree-sitter-javascript"
-      :revision (if abi<15 "v0.23.0"))
-    (:treesit latex
-      "https://github.com/latex-lsp/tree-sitter-latex"
-      :revision "v0.3.0")
-    ;; (:treesit bibtex "https://github.com/latex-lsp/tree-sitter-bibtex")
-    (:treesit make
-      "https://github.com/tree-sitter-grammars/tree-sitter-make")
-    (:treesit nix
-      "https://github.com/nix-community/tree-sitter-nix")
-    (:treesit perl
-      "https://github.com/ganezdragon/tree-sitter-perl")
-    (:treesit python
-      "https://github.com/tree-sitter/tree-sitter-python"
-      :revision (if abi<15 "v0.23.6")) ;; "v0.25.0"
-    (:treesit r
-      "https://github.com/r-lib/tree-sitter-r")
-    (:treesit ruby
-      "https://github.com/tree-sitter/tree-sitter-ruby")
-    (:treesit rust
-      "https://github.com/tree-sitter/tree-sitter-rust"
-      :revision (if abi<15 "v0.23.2")) ;; "v0.24.2"
-    (:treesit sql
-      "https://github.com/DerekStride/tree-sitter-sql"
-      :revision "gh-pages")
-    (:treesit typescript
-      "https://github.com/tree-sitter/tree-sitter-typescript"
-      :revision "v0.23.2"
-      :source-dir "typescript/src")
-    (:treesit tsx
-      "https://github.com/tree-sitter/tree-sitter-typescript"
-      :revision "v0.23.2"
-      :source-dir "tsx/src")
-    (:treesit toml
-      "https://github.com/tree-sitter-grammars/tree-sitter-toml")
-    (:treesit yaml
-      "https://github.com/tree-sitter-grammars/tree-sitter-yaml"
-      :revision (if abi<15 "v0.7.0")) ;; "v0.7.2"
-    (:treesit zig
-      "https://github.com/tree-sitter-grammars/tree-sitter-zig"
-      ;; :revision "v1.1.2"
-      ))
-  (:mode
-   ;; BUG: Emacs provides this setting in yaml-ts-mode.el, but it only works
-   ;;   after the package is loaded, defeating autoloading. So, we duplicate
-   ;;   them here.
-   ("\\.ya?ml\\'" . yaml-ts-mode)
-   ("clang.format\\'" . yaml-ts-mode)))
+;; (setup treesit
+;;   (:when (treesit-available-p))
+;;   (:setopt treesit-font-lock-level 4
+;;            treesit-enabled-modes t) ;; Emacs 31
+;;   ;; XXX: Since Emacs 31 a missing grammar is installed when a file needing
+;;   ;;   it is visited (see `treesit-auto-install-grammar'). Remove when we
+;;   ;;   drop Emacs 30 support.
+;;   (when (< emacs-major-version 31)
+;;     (:after-init helheim-install-missing-treesit-grammars))
+;;   (let ((abi<15 (< (treesit-library-abi-version) 15)))
+;;     (:treesit c
+;;       "https://github.com/tree-sitter/tree-sitter-c"
+;;       :revision (if abi<15 "v0.23.6")) ;; "v0.24.1"
+;;     (:treesit cpp
+;;       "https://github.com/tree-sitter/tree-sitter-cpp"
+;;       :revision (if abi<15 "v0.23.4"))
+;;     (:treesit c-sharp
+;;       "https://github.com/tree-sitter/tree-sitter-c-sharp"
+;;       :revision (if abi<15 "v0.20.0")) ;; "v0.23.1"
+;;     (:treesit css
+;;       "https://github.com/tree-sitter/tree-sitter-css"
+;;       :revision (if abi<15 "v0.23.0")) ;; "v0.23.2"
+;;     (:treesit commonlisp
+;;       "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp"
+;;       :revision "v0.4.1")
+;;     (:treesit dockerfile
+;;       "https://github.com/camdencheek/tree-sitter-dockerfile")
+;;     (:treesit elixir
+;;       "https://github.com/elixir-lang/tree-sitter-elixir")
+;;     (:treesit go
+;;       "https://github.com/tree-sitter/tree-sitter-go"
+;;       :revision (if abi<15 "v0.20.0")) ;; "v0.25.0"
+;;     (:treesit gomod
+;;       "https://github.com/camdencheek/tree-sitter-go-mod"
+;;       :revision "v1.0.2")
+;;     (:treesit gowork
+;;       "https://github.com/omertuc/tree-sitter-go-work")
+;;     (:treesit html
+;;       "https://github.com/tree-sitter/tree-sitter-html"
+;;       :revision (if abi<15 "v0.23.0")) ;; "v0.23.2"
+;;     (:treesit java
+;;       "https://github.com/tree-sitter/tree-sitter-java")
+;;     (:treesit javascript
+;;       "https://github.com/tree-sitter/tree-sitter-javascript"
+;;       :revision (if abi<15 "v0.23.0"))
+;;     (:treesit latex
+;;       "https://github.com/latex-lsp/tree-sitter-latex"
+;;       :revision "v0.3.0")
+;;     ;; (:treesit bibtex "https://github.com/latex-lsp/tree-sitter-bibtex")
+;;     (:treesit make
+;;       "https://github.com/tree-sitter-grammars/tree-sitter-make")
+;;     (:treesit nix
+;;       "https://github.com/nix-community/tree-sitter-nix")
+;;     (:treesit perl
+;;       "https://github.com/ganezdragon/tree-sitter-perl")
+;;     (:treesit python
+;;       "https://github.com/tree-sitter/tree-sitter-python"
+;;       :revision (if abi<15 "v0.23.6")) ;; "v0.25.0"
+;;     (:treesit r
+;;       "https://github.com/r-lib/tree-sitter-r")
+;;     (:treesit ruby
+;;       "https://github.com/tree-sitter/tree-sitter-ruby")
+;;     (:treesit rust
+;;       "https://github.com/tree-sitter/tree-sitter-rust"
+;;       :revision (if abi<15 "v0.23.2")) ;; "v0.24.2"
+;;     (:treesit sql
+;;       "https://github.com/DerekStride/tree-sitter-sql"
+;;       :revision "gh-pages")
+;;     (:treesit typescript
+;;       "https://github.com/tree-sitter/tree-sitter-typescript"
+;;       :revision "v0.23.2"
+;;       :source-dir "typescript/src")
+;;     (:treesit tsx
+;;       "https://github.com/tree-sitter/tree-sitter-typescript"
+;;       :revision "v0.23.2"
+;;       :source-dir "tsx/src")
+;;     (:treesit toml
+;;       "https://github.com/tree-sitter-grammars/tree-sitter-toml")
+;;     (:treesit yaml
+;;       "https://github.com/tree-sitter-grammars/tree-sitter-yaml"
+;;       :revision (if abi<15 "v0.7.0")) ;; "v0.7.2"
+;;     (:treesit zig
+;;       "https://github.com/tree-sitter-grammars/tree-sitter-zig"
+;;       ;; :revision "v1.1.2"
+;;       ))
+;;   (:mode
+;;    ;; BUG: Emacs provides this setting in yaml-ts-mode.el, but it only works
+;;    ;;   after the package is loaded, defeating autoloading. So, we duplicate
+;;    ;;   them here.
+;;    ("\\.ya?ml\\'" . yaml-ts-mode)
+;;    ("clang.format\\'" . yaml-ts-mode)))
 
 ;;;; Extra file extensions to support
 

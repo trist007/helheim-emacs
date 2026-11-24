@@ -1,6 +1,11 @@
 ;;; config.el --- Personal configuration -*- lexical-binding: t; -*-
 
 ;; Hooks
+(defun my/no-flymake-cc ()
+  (remove-hook 'flymake-diagnostic-functions #'flymake-cc t))
+(add-hook 'c-mode-hook #'my/no-flymake-cc)
+(add-hook 'c++-mode-hook #'my/no-flymake-cc)
+
 (defun my/c-indent-settings ()
   (setq-local c-basic-offset 2
               tab-width 2
@@ -23,15 +28,26 @@
 
 (add-hook 'emacs-startup-hook #'delete-other-windows)
 
+(defun my/apply-font (&optional frame)
+  "Apply font settings to FRAME if it is graphical."
+  (when (display-graphic-p frame)
+    (let* ((font "Cascadia Code")
+           (spec (font-spec :family font :size 19.0 :weight 'normal)))
+      (set-face-font 'default spec frame)
+      (set-face-font 'fixed-pitch spec frame)
+      (set-fontset-font t 'unicode font nil 'prepend))))
+
+(my/apply-font)
+(add-hook 'server-after-make-frame-hook #'my/apply-font)
+
+(add-hook 'server-after-make-frame-hook
+          (lambda () (bookmark-jump "gamedev")))
+
 ;; Disable elpaca from overwritting initial buffer choice
 (add-hook 'elpaca-after-init-hook
           (lambda ()
             (when (require 'which-key-posframe nil t)
-              (which-key-posframe-mode 1))
-            (bookmark-load "C:/Users/Tristan/.config/helheim-emacs/var/bookmarks" t t)
-            (condition-case err
-                (bookmark-jump "gamedev")
-              (error (message "wing-code bookmark failed: %s" err)))))
+              (which-key-posframe-mode 1))))
 
 ;; Enable modules
 (elpaca centaur-tabs
@@ -40,6 +56,10 @@
 ;; Global Keybinds
 (keymap-global-set "C-," #'other-frame)
 (keymap-global-set "C-c o f" #'make-frame)
+(keymap-global-set "C-x k" #'kill-current-buffer)
+
+;; Hel KeyBinds
+(hel-keymap-set hel-normal-state-map "C-e" #'end-of-line)
 
 ;; unassign F2 from eglot-rename
 (with-eval-after-load 'eglot
@@ -88,6 +108,19 @@
       (seq-remove (lambda (e) (memq (car e) '(c-mode c++-mode)))
                   major-mode-remap-defaults))
 ;; Emacs config
+
+;; replace Class with Struct in which-function bar at top
+(with-eval-after-load 'cc-menus
+  (setq cc-imenu-c-generic-expression
+        (mapcar (lambda (entry)
+                  (if (equal (car entry) "Class")
+                      (cons "Struct" (cdr entry))
+                    entry))
+                cc-imenu-c++-generic-expression)))
+
+;; load bookmarks
+(bookmark-load "C:/Users/Tristan/.config/emacs/var/bookmarks" t t)
+
 ;; Disable smooth scroll animation in hel (check `C-h v hel-smooth` if variable name differs)
 (with-eval-after-load 'hel
   (setq hel-smooth-scroll nil))
@@ -218,6 +251,8 @@
 
 (defconst my/wing-build-keys
 '(("M-m"      . "build game")
+  ("M-n"      . "debug d3d11")
+  ("M-N"      . "debug vulkan")
   ("M-M"      . "build game2")
   ("C-M-m"    . "build game3")
   ("<f4>"     . "build engine")
@@ -347,6 +382,7 @@
    '(eglot-eglot-highlight-symbol-face ((t :foreground "#ba55d3")))
    '(font-lock-constant-face       ((t :foreground "#adff2f")))
    '(font-lock-function-call-face  ((t :foreground "#1e90ff")))
+   '(font-lock-type-face           ((t :foreground "#1e90ff")))
 
    ;; dired
    '(diredfl-number     ((t :foreground "#ba55d3")))

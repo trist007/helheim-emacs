@@ -108,8 +108,8 @@
 ;; `yas-expand-snippet', and asks the server for snippets only when
 ;; YASnippet is installed. `helheim-snippets' configures it for your own
 ;; snippets.
-(setup yasnippet
-  (:install t))
+;; (setup yasnippet
+;;   (:install t))
 
 (setup consult-eglot
   (:install t)
@@ -144,9 +144,7 @@
 (setup breadcrumb
   (:install t)
   (:hook (c-mode-hook
-          c++-mode-hook
-          c-ts-mode-hook
-          c++-ts-mode-hook) breadcrumb-local-mode))
+          c++-mode-hook) breadcrumb-local-mode))
 
 ;;; .
 (provide 'helheim-eglot)

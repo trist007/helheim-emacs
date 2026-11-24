@@ -1,16 +1,16 @@
 ;;; helheim-cpp.el -*- lexical-binding: t; no-byte-compile: t -*-
 
-(setup c-ts-mode
-  (add-to-list 'major-mode-remap-defaults '(c-mode . c-ts-mode))
-  (add-to-list 'major-mode-remap-defaults '(c++-mode . c++-ts-mode))
-  (:hook ( c-mode-hook c++-mode-hook
-           c-ts-mode-hook c++-ts-mode-hook)
-         helheim-lsp)
-  (:setopt c-ts-mode-indent-offset 4
-           c-ts-mode-indent-style 'helheim-c-ts-indent-style)
-  (:after-load
-    ;; Set line comment style.
-    (c-ts-mode-toggle-comment-style -1)))
+;; (setup c-ts-mode
+;;   ;; (add-to-list 'major-mode-remap-defaults '(c-mode . c-ts-mode))
+;;   ;; (add-to-list 'major-mode-remap-defaults '(c++-mode . c++-ts-mode))
+;;   (:hook ( c-mode-hook c++-mode-hook
+;;            c-ts-mode-hook c++-ts-mode-hook)
+;;          helheim-lsp)
+;;   (:setopt c-ts-mode-indent-offset 4
+;;            c-ts-mode-indent-style 'helheim-c-ts-indent-style)
+;;   (:after-load
+;;     ;; Set line comment style.
+;;     (c-ts-mode-toggle-comment-style -1)))
 
 (setup cmake
   (when (< emacs-major-version 31)
